@@ -10,5 +10,22 @@
   },
   "devDependencies": {
     "vite": "^6.2.5"
-  }
+  },
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "esbuild": "^0.25.2",
+    "express": "^5.1.0",
+    "mongoose": "^8.13.2",
+    "nanoid": "^3.3.11",
+    "picocolors": "^1.1.1",
+    "postcss": "^8.5.3",
+    "rollup": "^4.39.0",
+    "source-map-js": "^1.2.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
