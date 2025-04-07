@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -14,11 +15,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
         
         :root {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --secondary: #10b981;
-            --secondary-dark: #059669;
-            --accent: #8b5cf6;
+            --primary: #e53e3e;
+            --primary-dark: #c53030;
+            --secondary: #e53e3e;
+            --secondary-dark: #c53030;
+            --accent: #e53e3e;
             --danger: #ef4444;
             --warning: #f59e0b;
             --info: #3b82f6;
@@ -29,6 +30,7 @@
             --text-dark: #f9fafb;
             --border-light: #e5e7eb;
             --border-dark: #374151;
+            --red-accent: #e53e3e; /* JAL Red color */
         }
         
         body {
@@ -37,8 +39,8 @@
         }
         
         .dark {
-            --primary: #60a5fa;
-            --primary-dark: #3b82f6;
+            --primary: #f87171;
+            --primary-dark: #ef4444;
         }
         
         /* Estilos personalizados */
@@ -132,6 +134,60 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Animações para o dashboard */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes growWidth {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        @keyframes countUp {
+            from { content: "0"; }
+            to { content: attr(data-value); }
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 0.8s ease forwards;
+        }
+        
+        .animate-grow-width {
+            animation: growWidth 1.5s ease forwards;
+        }
+        
+        .animate-count-up::after {
+            content: "0";
+            animation: countUp 2s ease forwards;
+        }
+        
+        /* Animação de carregamento para os gráficos */
+        .chart-loading {
+            position: relative;
+        }
+        
+        .chart-loading::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
         }
         
         /* Estilos para o menu lateral */
@@ -268,6 +324,95 @@
             transform: translateY(0);
             pointer-events: auto;
         }
+        
+        /* Estilo para modais com rolagem */
+        .modal-scrollable {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        /* Estilos para o tutorial em slides */
+        .slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .slide.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        .slide-image {
+            background-color: #f3f4f6;
+            height: 200px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .dark .slide-image {
+            background-color: #374151;
+        }
+        
+        .slide-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+        }
+        
+        .slide-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .slide-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #d1d5db;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .slide-dot.active {
+            background-color: var(--primary);
+        }
+        
+        /* Temas de cores JAL - Esquema vermelho */
+        .jal-bg-red {
+            background-color: var(--red-accent);
+        }
+        
+        .jal-text-red {
+            color: var(--red-accent);
+        }
+        
+        .jal-border-red {
+            border-color: var(--red-accent);
+        }
+        
+        .jal-header {
+            background: linear-gradient(135deg, var(--red-accent) 0%, #c53030 100%);
+            color: white;
+        }
+        
+        .jal-card {
+            border-top: 4px solid var(--red-accent);
+        }
+        
+        /* Animação do contador */
+        .counter-animation {
+            transition: all 1s ease;
+            display: inline-block;
+        }
+        
+        .counter-animation.animate {
+            transform: scale(1.2);
+        }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen">
@@ -282,7 +427,7 @@
     <!-- Tutorial/Ajuda Modal -->
     <div id="help-modal" class="fixed inset-0 z-40 hidden">
         <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-        <div class="relative max-w-4xl mx-auto mt-10 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+        <div class="relative max-w-4xl mx-auto mt-10 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden modal-scrollable">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-primary dark:text-primary-dark">
@@ -375,7 +520,7 @@
                 </div>
                 
                 <div class="mt-6 pt-4 border-t border-gray-300 dark:border-gray-600 flex justify-end">
-                    <button id="close-help-btn" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors premium-button">
+                    <button id="close-help-btn" class="px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark transition-colors premium-button">
                         Entendi
                     </button>
                 </div>
@@ -386,7 +531,7 @@
     <!-- Config/Preferências Modal -->
     <div id="config-modal" class="fixed inset-0 z-40 hidden">
         <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-        <div class="relative max-w-2xl mx-auto mt-10 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+        <div class="relative max-w-2xl mx-auto mt-10 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden modal-scrollable">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-primary dark:text-primary-dark">
@@ -436,10 +581,10 @@
                     <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                         <h3 class="text-lg font-medium mb-3">Exportação de Dados</h3>
                         <div class="flex flex-col space-y-2">
-                            <button id="export-all-data" class="text-left px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors premium-button">
+                            <button id="export-all-data" class="text-left px-4 py-2 bg-blue-500 text-black rounded hover:bg-blue-600 transition-colors premium-button">
                                 <i class="fas fa-file-export mr-2"></i>Exportar Todos os Dados
                             </button>
-                            <button id="import-data" class="text-left px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors premium-button">
+                            <button id="import-data" class="text-left px-4 py-2 bg-green-500 text-black rounded hover:bg-green-600 transition-colors premium-button">
                                 <i class="fas fa-file-import mr-2"></i>Importar Dados
                             </button>
                             <input type="file" id="import-file" class="hidden" accept=".json">
@@ -448,7 +593,7 @@
                 </div>
                 
                 <div class="mt-6 pt-4 border-t border-gray-300 dark:border-gray-600 flex justify-end">
-                    <button id="close-config-btn" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors premium-button">
+                    <button id="close-config-btn" class="px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark transition-colors premium-button">
                         Salvar Alterações
                     </button>
                 </div>
@@ -484,7 +629,7 @@
                         <button type="button" id="cancel-admin-login" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                             Cancelar
                         </button>
-                        <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary premium-button">
+                        <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary premium-button">
                             Entrar
                         </button>
                     </div>
@@ -493,10 +638,170 @@
         </div>
     </div>
     
+    <!-- Tutorial em Slides para Admin -->
+    <div id="tutorial-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div class="relative max-w-4xl mx-auto mt-10 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-primary dark:text-primary-dark">
+                        <i class="fas fa-chalkboard-teacher mr-2"></i>Tutorial do Painel Admin
+                    </h2>
+                    <button id="close-tutorial" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="slides-container">
+                    <!-- Slide 1 -->
+                    <div class="slide active" id="slide-1">
+                        <div class="slide-image">
+                            <div class="w-full h-full flex flex-col items-center justify-center">
+                                <i class="fas fa-cogs text-5xl text-primary mb-4"></i>
+                                <span class="text-xl font-semibold">Gerenciamento de Máquinas</span>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-primary dark:text-primary-dark">Gerenciando Máquinas</h3>
+                        <p class="mb-2">Aqui você pode adicionar, editar e remover máquinas do sistema.</p>
+                        <ul class="list-disc ml-5 space-y-1 mb-4">
+                            <li>Digite o nome/código da máquina no campo e clique em "Adicionar"</li>
+                            <li>Para editar, clique no ícone de lápis na linha da máquina</li>
+                            <li>Para excluir, clique no ícone de lixeira (esta ação requer confirmação)</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Slide 2 -->
+                    <div class="slide" id="slide-2">
+                        <div class="slide-image">
+                            <div class="w-full h-full flex flex-col items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-5xl text-primary mb-4"></i>
+                                <span class="text-xl font-semibold">Motivos de Parada</span>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-primary dark:text-primary-dark">Configurando Motivos de Parada</h3>
+                        <p class="mb-2">Defina os códigos e descrições dos motivos de parada.</p>
+                        <ul class="list-disc ml-5 space-y-1 mb-4">
+                            <li>Cada motivo tem um código numérico (ex: 10) e uma descrição (ex: "Ajustes")</li>
+                            <li>Os códigos padrão incluem: 10 (Ajustes), 20 (Enroscos), 30 (Falhas), etc.</li>
+                            <li>Você pode alterar os códigos existentes ou criar novos conforme necessário</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Slide 3 -->
+                    <div class="slide" id="slide-3">
+                        <div class="slide-image">
+                            <div class="w-full h-full flex flex-col items-center justify-center">
+                                <i class="fas fa-clipboard-list text-5xl text-primary mb-4"></i>
+                                <span class="text-xl font-semibold">Ocorrências Específicas</span>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-primary dark:text-primary-dark">Gerenciando Ocorrências</h3>
+                        <p class="mb-2">Configure as ocorrências específicas para cada motivo de parada.</p>
+                        <ul class="list-disc ml-5 space-y-1 mb-4">
+                            <li>Selecione o motivo, defina um código e uma descrição para cada ocorrência</li>
+                            <li>Exemplo: Para o motivo "10 - Ajustes", você pode ter ocorrências como "101 - Ajuste de pressão"</li>
+                            <li>Use o filtro para visualizar apenas as ocorrências de um motivo específico</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Slide 4 -->
+                    <div class="slide" id="slide-4">
+                        <div class="slide-image">
+                            <div class="w-full h-full flex flex-col items-center justify-center">
+                                <i class="fas fa-building text-5xl text-primary mb-4"></i>
+                                <span class="text-xl font-semibold">Gerenciamento de Setores</span>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-primary dark:text-primary-dark">Configurando Setores</h3>
+                        <p class="mb-2">Adicione e gerencie os setores da empresa.</p>
+                        <ul class="list-disc ml-5 space-y-1 mb-4">
+                            <li>Defina setores como "Manutenção", "Produção", "PCP", etc.</li>
+                            <li>Os setores são utilizados para categorizar registros de parada</li>
+                            <li>Se estiver usando vinculação por máquina, os setores ainda estarão disponíveis para seleção em cada registro</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Slide 5 -->
+                    <div class="slide" id="slide-5">
+                        <div class="slide-image">
+                            <div class="w-full h-full flex flex-col items-center justify-center">
+                                <i class="fas fa-users text-5xl text-primary mb-4"></i>
+                                <span class="text-xl font-semibold">Gerenciamento de Operadores</span>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-primary dark:text-primary-dark">Configurando Operadores</h3>
+                        <p class="mb-2">Adicione e gerencie os operadores da fábrica.</p>
+                        <ul class="list-disc ml-5 space-y-1 mb-4">
+                            <li>Digite o nome completo do operador e clique em "Adicionar"</li>
+                            <li>Os operadores serão associados a setores ou máquinas através das atribuições</li>
+                            <li>Os nomes dos operadores são utilizados nos registros e relatórios</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Slide 6 -->
+                    <div class="slide" id="slide-6">
+                        <div class="slide-image">
+                            <div class="w-full h-full flex flex-col items-center justify-center">
+                                <i class="fas fa-user-tag text-5xl text-primary mb-4"></i>
+                                <span class="text-xl font-semibold">Atribuições</span>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-primary dark:text-primary-dark">Atribuição de Operadores</h3>
+                        <p class="mb-2">Vincule operadores a máquinas ou setores.</p>
+                        <ul class="list-disc ml-5 space-y-1 mb-4">
+                            <li>Selecione a máquina (ou setor, dependendo da configuração) e o operador</li>
+                            <li>Clique em "Associar" para criar a vinculação</li>
+                            <li>Esta função controla quais operadores aparecem disponíveis para cada máquina</li>
+                            <li>Use o filtro para visualizar as atribuições por máquina ou setor</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Slide 7 -->
+                    <div class="slide" id="slide-7">
+                        <div class="slide-image">
+                            <div class="w-full h-full flex flex-col items-center justify-center">
+                                <i class="fas fa-sliders-h text-5xl text-primary mb-4"></i>
+                                <span class="text-xl font-semibold">Configurações</span>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-primary dark:text-primary-dark">Configurações do Sistema</h3>
+                        <p class="mb-2">Personalize o funcionamento do sistema conforme suas necessidades.</p>
+                        <ul class="list-disc ml-5 space-y-1 mb-4">
+                            <li><strong>Unidade de Tempo:</strong> Alterne entre minutos e horas para registros de parada</li>
+                            <li><strong>Vinculação de Operadores:</strong> Escolha se operadores são vinculados a máquinas ou setores</li>
+                            <li><strong>Senha de Administrador:</strong> Altere a senha de acesso ao painel</li>
+                            <li><strong>Backup e Restauração:</strong> Faça backup dos dados ou restaure a partir de um arquivo</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="slide-controls">
+                        <button id="prev-slide" class="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-400 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:ring-opacity-50 transition-colors">
+                            <i class="fas fa-arrow-left mr-2"></i>Anterior
+                        </button>
+                        
+                        <div class="slide-dots">
+                            <span class="slide-dot active" data-slide="1"></span>
+                            <span class="slide-dot" data-slide="2"></span>
+                            <span class="slide-dot" data-slide="3"></span>
+                            <span class="slide-dot" data-slide="4"></span>
+                            <span class="slide-dot" data-slide="5"></span>
+                            <span class="slide-dot" data-slide="6"></span>
+                            <span class="slide-dot" data-slide="7"></span>
+                        </div>
+                        
+                        <button id="next-slide" class="px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
+                            Próximo<i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Tela de seleção de máquina (inicial) -->
     <div id="selecao-maquina" class="container mx-auto px-4 py-8">
         <div class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-primary dark:text-primary-dark">Sistema de Registro de Paradas</h1>
+            <h1 class="text-3xl font-bold text-primary dark:text-primary-dark jal-text-red">Sistema de Registro de Paradas</h1>
             <div class="flex space-x-2">
                 <button id="help-btn" class="p-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="Ajuda">
                     <i class="fas fa-question-circle text-xl"></i>
@@ -510,8 +815,8 @@
             </div>
         </div>
         
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl premium-card p-6 mb-8">
-            <h2 class="text-2xl font-semibold mb-6 text-center">Selecione a Máquina</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl premium-card p-6 mb-8 jal-border-red jal-card">
+            <h2 class="text-2xl font-semibold mb-6 text-center text-primary dark:text-primary-dark jal-text-red">Selecione a Máquina</h2>
             
             <div id="machines-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 <!-- As máquinas serão carregadas aqui via JavaScript -->
@@ -520,7 +825,7 @@
         
         <footer class="text-center text-sm text-gray-500 dark:text-gray-400 mt-8">
             <p>&copy; 2025 Sistema de Registro de Paradas de Máquina. Todos os direitos reservados.</p>
-            <p class="mt-1">Desenvolvido pela Fábrica de Software (TI)</p>
+            <p class="mt-1">Desenvolvido por Gabriel Perrin - Responsável Técnico</p>
         </footer>
     </div>
 
@@ -625,7 +930,7 @@
                 
                 <!-- Seção de Registro (visível por padrão) -->
                 <section id="section-registro" class="fade-in">
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg premium-card mb-8">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg premium-card mb-8 jal-card">
                         <div class="p-6">
                             <h2 class="text-xl font-semibold mb-6 border-b pb-2 border-gray-200 dark:border-gray-700">Novo Registro de Parada</h2>
                             
@@ -684,7 +989,7 @@
                                 
                                 <div class="flex justify-end pt-2">
                                     <button type="submit" 
-                                            class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
+                                            class="px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
                                         <i class="fas fa-save mr-2"></i>Registrar Parada
                                     </button>
                                 </div>
@@ -695,18 +1000,18 @@
                 
                 <!-- Seção de Histórico (oculta por padrão) -->
                 <section id="section-historico" class="hidden fade-in">
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg premium-card">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg premium-card jal-card">
                         <div class="p-6">
                             <div class="flex flex-wrap justify-between items-center mb-6 border-b pb-2 border-gray-200 dark:border-gray-700">
                                 <h2 class="text-xl font-semibold">Histórico de Paradas</h2>
                                 <div class="flex flex-wrap gap-2">
-                                    <button id="btn-exportar-pdf" class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition-colors premium-button">
+                                    <button id="btn-exportar-pdf" class="px-3 py-1 bg-red-500 text-black rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition-colors premium-button">
                                         <i class="fas fa-file-pdf mr-1"></i>PDF
                                     </button>
-                                    <button id="btn-exportar-excel" class="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors premium-button">
+                                    <button id="btn-exportar-excel" class="px-3 py-1 bg-green-500 text-black rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors premium-button">
                                         <i class="fas fa-file-excel mr-1"></i>Excel
                                     </button>
-                                    <button id="refresh-registros" class="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors premium-button">
+                                    <button id="refresh-registros" class="px-3 py-1 bg-blue-500 text-black rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors premium-button">
                                         <i class="fas fa-sync-alt mr-1"></i>Atualizar
                                     </button>
                                     <button id="limpar-filtros" class="px-3 py-1 bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition-colors premium-button">
@@ -807,11 +1112,11 @@
                 <section id="section-dashboard" class="hidden fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                         <!-- Cards de Estatísticas -->
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card jal-card animate-slide-up" style="animation-delay: 0.1s">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Paradas</p>
-                                    <h3 id="total-paradas" class="text-3xl font-bold mt-1">0</h3>
+                                    <h3 id="total-paradas" class="text-3xl font-bold mt-1 counter-animation">0</h3>
                                 </div>
                                 <div class="p-3 bg-blue-100 text-blue-500 dark:bg-blue-900 dark:text-blue-300 rounded-lg">
                                     <i class="fas fa-clipboard-list text-xl"></i>
@@ -824,11 +1129,11 @@
                             </div>
                         </div>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card jal-card animate-slide-up" style="animation-delay: 0.2s">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Tempo Total Parado</p>
-                                    <h3 id="tempo-total-parado" class="text-3xl font-bold mt-1">0 min</h3>
+                                    <h3 id="tempo-total-parado" class="text-3xl font-bold mt-1 counter-animation">0 min</h3>
                                 </div>
                                 <div class="p-3 bg-red-100 text-red-500 dark:bg-red-900 dark:text-red-300 rounded-lg">
                                     <i class="fas fa-clock text-xl"></i>
@@ -841,7 +1146,7 @@
                             </div>
                         </div>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card jal-card animate-slide-up" style="animation-delay: 0.3s">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Motivo Mais Frequente</p>
@@ -858,11 +1163,11 @@
                             </div>
                         </div>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card jal-card animate-slide-up" style="animation-delay: 0.4s">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Parada Mais Longa</p>
-                                    <h3 id="parada-longa" class="text-3xl font-bold mt-1">0 min</h3>
+                                    <h3 id="parada-longa" class="text-3xl font-bold mt-1 counter-animation">0 min</h3>
                                 </div>
                                 <div class="p-3 bg-purple-100 text-purple-500 dark:bg-purple-900 dark:text-purple-300 rounded-lg">
                                     <i class="fas fa-hourglass-end text-xl"></i>
@@ -878,25 +1183,25 @@
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                         <!-- Gráficos -->
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card jal-card animate-slide-up" style="animation-delay: 0.5s">
                             <h3 class="text-lg font-semibold mb-4">Distribuição por Motivos</h3>
-                            <div class="chart-container">
+                            <div class="chart-container chart-loading">
                                 <canvas id="motivos-chart"></canvas>
                             </div>
                         </div>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card jal-card animate-slide-up" style="animation-delay: 0.6s">
                             <h3 class="text-lg font-semibold mb-4">Tempo Total por Dia (Últimos 7 dias)</h3>
-                            <div class="chart-container">
+                            <div class="chart-container chart-loading">
                                 <canvas id="tempo-diario-chart"></canvas>
                             </div>
                         </div>
                     </div>
                     
                     <div class="grid grid-cols-1 gap-6">
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card jal-card animate-slide-up" style="animation-delay: 0.7s">
                             <h3 class="text-lg font-semibold mb-4">Tempo de Parada por Ocorrência</h3>
-                            <div class="chart-container" style="height: 400px;">
+                            <div class="chart-container chart-loading" style="height: 400px;">
                                 <canvas id="ocorrencias-chart"></canvas>
                             </div>
                         </div>
@@ -907,7 +1212,7 @@
                 <section id="section-relatorios" class="hidden fade-in">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                         <!-- Cards de Relatórios -->
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card jal-card">
                             <div class="flex flex-col h-full">
                                 <div class="flex justify-between items-start mb-4">
                                     <div>
@@ -926,14 +1231,14 @@
                                     </div>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                    <button class="export-relatorio-diario w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors premium-button">
+                                    <button class="export-relatorio-diario w-full px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark transition-colors premium-button">
                                         <i class="fas fa-file-export mr-2"></i>Exportar
                                     </button>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card jal-card">
                             <div class="flex flex-col h-full">
                                 <div class="flex justify-between items-start mb-4">
                                     <div>
@@ -952,14 +1257,14 @@
                                     </div>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                    <button class="export-relatorio-semanal w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors premium-button">
+                                    <button class="export-relatorio-semanal w-full px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark transition-colors premium-button">
                                         <i class="fas fa-file-export mr-2"></i>Exportar
                                     </button>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card jal-card">
                             <div class="flex flex-col h-full">
                                 <div class="flex justify-between items-start mb-4">
                                     <div>
@@ -978,7 +1283,7 @@
                                     </div>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                    <button class="export-relatorio-mensal w-full px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors premium-button">
+                                    <button class="export-relatorio-mensal w-full px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark transition-colors premium-button">
                                         <i class="fas fa-file-export mr-2"></i>Exportar
                                     </button>
                                 </div>
@@ -986,7 +1291,7 @@
                         </div>
                     </div>
                     
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card mb-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card mb-6 jal-card">
                         <h3 class="text-lg font-semibold mb-4">Relatório Personalizado</h3>
                         
                         <form id="relatorio-personalizado-form" class="space-y-4">
@@ -1024,14 +1329,14 @@
                             </div>
                             
                             <div class="flex justify-end">
-                                <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
+                                <button type="submit" class="px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
                                     <i class="fas fa-file-export mr-2"></i>Gerar Relatório
                                 </button>
                             </div>
                         </form>
                     </div>
                     
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 premium-card jal-card">
                         <h3 class="text-lg font-semibold mb-4">Histórico de Relatórios</h3>
                         
                         <div class="overflow-x-auto">
@@ -1062,7 +1367,7 @@
     <!-- Modal de Detalhes de Parada -->
     <div id="modal-detalhes" class="fixed inset-0 z-40 hidden">
         <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-        <div class="relative max-w-lg mx-auto mt-20 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+        <div class="relative max-w-lg mx-auto mt-20 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden modal-scrollable">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold text-primary dark:text-primary-dark">
@@ -1077,7 +1382,7 @@
                     <!-- Conteúdo do modal será inserido aqui -->
                 </div>
                 
-                <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+                <div class="mt-6 pt-4 border-t border-gray-300 dark:border-gray-700 flex justify-end">
                     <button id="fechar-modal" class="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors">
                         Fechar
                     </button>
@@ -1105,7 +1410,7 @@
                     <button id="confirmar-cancelar" class="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors">
                         Cancelar
                     </button>
-                    <button id="confirmar-confirmar" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition-colors premium-button">
+                    <button id="confirmar-confirmar" class="px-4 py-2 bg-red-500 text-black rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition-colors premium-button">
                         Confirmar
                     </button>
                 </div>
@@ -1129,7 +1434,7 @@
                     
                     <ul class="space-y-2">
                         <li>
-                            <button id="admin-tab-maquinas" class="w-full flex items-center py-2 px-4 rounded-md bg-primary text-white hover:bg-primary-dark transition-colors">
+                            <button id="admin-tab-maquinas" class="w-full flex items-center py-2 px-4 rounded-md bg-primary text-black hover:bg-primary-dark transition-colors">
                                 <i class="fas fa-cogs w-6"></i>
                                 <span class="ml-2">Máquinas</span>
                             </button>
@@ -1170,6 +1475,12 @@
                                 <span class="ml-2">Configurações</span>
                             </button>
                         </li>
+                        <li class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+                            <button id="show-tutorial" class="w-full flex items-center py-2 px-4 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors bg-blue-50 dark:bg-blue-900">
+                                <i class="fas fa-book-open w-6"></i>
+                                <span class="ml-2">Tutorial</span>
+                            </button>
+                        </li>
                     </ul>
                 </div>
                 
@@ -1179,7 +1490,7 @@
                     <div id="admin-secao-maquinas" class="fade-in">
                         <h2 class="text-2xl font-bold mb-6">Gerenciar Máquinas</h2>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 jal-card">
                             <h3 class="text-lg font-semibold mb-4">Adicionar Máquina</h3>
                             
                             <form id="form-add-maquina" class="space-y-4">
@@ -1189,7 +1500,7 @@
                                         <input type="text" id="nova-maquina" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700" placeholder="Ex: LM 1" required>
                                     </div>
                                     <div class="flex items-end">
-                                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
+                                        <button type="submit" class="px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
                                             <i class="fas fa-plus mr-2"></i>Adicionar
                                         </button>
                                     </div>
@@ -1197,7 +1508,7 @@
                             </form>
                         </div>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 jal-card">
                             <h3 class="text-lg font-semibold mb-4">Máquinas Cadastradas</h3>
                             
                             <div class="overflow-x-auto">
@@ -1224,7 +1535,7 @@
                     <div id="admin-secao-motivos" class="hidden fade-in">
                         <h2 class="text-2xl font-bold mb-6">Gerenciar Motivos de Parada</h2>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 jal-card">
                             <h3 class="text-lg font-semibold mb-4">Adicionar/Editar Motivo</h3>
                             
                             <form id="form-add-motivo" class="space-y-4">
@@ -1239,7 +1550,7 @@
                                     </div>
                                     <div class="flex items-end">
                                         <input type="hidden" id="motivo-id" value="">
-                                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
+                                        <button type="submit" class="px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
                                             <i class="fas fa-save mr-2"></i><span id="btn-motivo-text">Adicionar</span>
                                         </button>
                                     </div>
@@ -1247,7 +1558,7 @@
                             </form>
                         </div>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 jal-card">
                             <h3 class="text-lg font-semibold mb-4">Motivos Cadastrados</h3>
                             
                             <div class="overflow-x-auto">
@@ -1275,7 +1586,7 @@
                     <div id="admin-secao-ocorrencias" class="hidden fade-in">
                         <h2 class="text-2xl font-bold mb-6">Gerenciar Ocorrências</h2>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 jal-card">
                             <h3 class="text-lg font-semibold mb-4">Adicionar/Editar Ocorrência</h3>
                             
                             <form id="form-add-ocorrencia" class="space-y-4">
@@ -1296,7 +1607,7 @@
                                     </div>
                                     <div class="flex items-end">
                                         <input type="hidden" id="ocorrencia-id" value="">
-                                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
+                                        <button type="submit" class="px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
                                             <i class="fas fa-save mr-2"></i><span id="btn-ocorrencia-text">Adicionar</span>
                                         </button>
                                     </div>
@@ -1304,7 +1615,7 @@
                             </form>
                         </div>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 jal-card">
                             <h3 class="text-lg font-semibold mb-4">Ocorrências Cadastradas</h3>
                             
                             <div class="mb-4">
@@ -1340,7 +1651,7 @@
                     <div id="admin-secao-setores" class="hidden fade-in">
                         <h2 class="text-2xl font-bold mb-6">Gerenciar Setores</h2>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 jal-card">
                             <h3 class="text-lg font-semibold mb-4">Adicionar/Editar Setor</h3>
                             
                             <form id="form-add-setor" class="space-y-4">
@@ -1351,7 +1662,7 @@
                                     </div>
                                     <div class="flex items-end">
                                         <input type="hidden" id="setor-id" value="">
-                                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
+                                        <button type="submit" class="px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
                                             <i class="fas fa-save mr-2"></i><span id="btn-setor-text">Adicionar</span>
                                         </button>
                                     </div>
@@ -1359,7 +1670,7 @@
                             </form>
                         </div>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 jal-card">
                             <h3 class="text-lg font-semibold mb-4">Setores Cadastrados</h3>
                             
                             <div class="overflow-x-auto">
@@ -1386,7 +1697,7 @@
                     <div id="admin-secao-operadores" class="hidden fade-in">
                         <h2 class="text-2xl font-bold mb-6">Gerenciar Operadores</h2>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 jal-card">
                             <h3 class="text-lg font-semibold mb-4">Adicionar/Editar Operador</h3>
                             
                             <form id="form-add-operador" class="space-y-4">
@@ -1397,7 +1708,7 @@
                                     </div>
                                     <div class="flex items-end">
                                         <input type="hidden" id="operador-id" value="">
-                                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
+                                        <button type="submit" class="px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
                                             <i class="fas fa-save mr-2"></i><span id="btn-operador-text">Adicionar</span>
                                         </button>
                                     </div>
@@ -1405,7 +1716,7 @@
                             </form>
                         </div>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 jal-card">
                             <h3 class="text-lg font-semibold mb-4">Operadores Cadastrados</h3>
                             
                             <div class="overflow-x-auto">
@@ -1432,7 +1743,7 @@
                     <div id="admin-secao-atribuicoes" class="hidden fade-in">
                         <h2 class="text-2xl font-bold mb-6">Gerenciar Atribuições</h2>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 jal-card">
                             <h3 class="text-lg font-semibold mb-4">Associar Operador</h3>
                             
                             <form id="form-add-atribuicao" class="space-y-4">
@@ -1450,7 +1761,7 @@
                                         </select>
                                     </div>
                                     <div class="flex items-end">
-                                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
+                                        <button type="submit" class="px-4 py-2 bg-primary text-black rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
                                             <i class="fas fa-link mr-2"></i>Associar
                                         </button>
                                     </div>
@@ -1458,7 +1769,7 @@
                             </form>
                         </div>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 jal-card">
                             <h3 class="text-lg font-semibold mb-4">Atribuições Cadastradas</h3>
                             
                             <div class="mb-4">
@@ -1493,7 +1804,7 @@
                     <div id="admin-secao-configuracoes" class="hidden fade-in">
                         <h2 class="text-2xl font-bold mb-6">Configurações do Sistema</h2>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 jal-card">
                             <h3 class="text-lg font-semibold mb-4">Preferências Gerais</h3>
                             
                             <div class="space-y-6">
@@ -1524,29 +1835,29 @@
                                         <h4 class="font-medium">Senha de Administrador</h4>
                                         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Alterar a senha de acesso ao painel administrativo</p>
                                     </div>
-                                    <button id="alterar-senha-admin" class="px-3 py-1 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
+                                    <button id="alterar-senha-admin" class="px-3 py-1 bg-primary text-black rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-colors premium-button">
                                         Alterar Senha
                                     </button>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 jal-card">
                             <h3 class="text-lg font-semibold mb-4">Backup e Restauração</h3>
                             
                             <div class="space-y-4">
-                                <button id="admin-export-all" class="w-full px-4 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors premium-button flex items-center justify-center">
+                                <button id="admin-export-all" class="w-full px-4 py-3 bg-blue-500 text-black rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors premium-button flex items-center justify-center">
                                     <i class="fas fa-download mr-2"></i>Fazer Backup Completo
                                 </button>
                                 
                                 <div class="relative">
                                     <input type="file" id="admin-import-file" class="hidden" accept=".json">
-                                    <button id="admin-import-all" class="w-full px-4 py-3 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors premium-button flex items-center justify-center">
+                                    <button id="admin-import-all" class="w-full px-4 py-3 bg-green-500 text-black rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors premium-button flex items-center justify-center">
                                         <i class="fas fa-upload mr-2"></i>Restaurar a partir de Backup
                                     </button>
                                 </div>
                                 
-                                <button id="admin-reset-all" class="w-full px-4 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition-colors premium-button flex items-center justify-center">
+                                <button id="admin-reset-all" class="w-full px-4 py-3 bg-red-500 text-black rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition-colors premium-button flex items-center justify-center">
                                     <i class="fas fa-exclamation-triangle mr-2"></i>Resetar Sistema
                                 </button>
                             </div>
@@ -1593,7 +1904,7 @@
                         <button type="button" id="cancelar-alterar-senha" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                             Cancelar
                         </button>
-                        <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary premium-button">
+                        <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary premium-button">
                             Alterar Senha
                         </button>
                     </div>
@@ -1615,6 +1926,7 @@
             let motivosCache = [];
             let ocorrenciasCache = [];
             let confirmCallback = null;
+            let currentSlide = 1;
             
             // Verifica se já existe uma senha de admin salva
             if (!localStorage.getItem(ADMIN_PASSWORD_KEY)) {
@@ -1627,7 +1939,7 @@
             }
             
             if (!localStorage.getItem(OPERATOR_BINDING_KEY)) {
-                localStorage.setItem(OPERATOR_BINDING_KEY, 'false');
+                localStorage.setItem(OPERATOR_BINDING_KEY, 'true'); // Alterado para true por padrão
             }
             
             // Inicializa dados padrão se o sistema for novo
@@ -1662,6 +1974,19 @@
             document.getElementById('help-button').addEventListener('click', abrirAjuda);
             document.getElementById('config-btn').addEventListener('click', abrirConfiguracoes);
             document.getElementById('admin-btn').addEventListener('click', abrirLoginAdmin);
+            
+            // Event Listeners - Tutorial em Slides
+            document.getElementById('show-tutorial').addEventListener('click', abrirTutorial);
+            document.getElementById('close-tutorial').addEventListener('click', fecharTutorial);
+            document.getElementById('prev-slide').addEventListener('click', mostrarSlideAnterior);
+            document.getElementById('next-slide').addEventListener('click', mostrarProximoSlide);
+            
+            // Event listeners para os pontos do slide
+            document.querySelectorAll('.slide-dot').forEach(dot => {
+                dot.addEventListener('click', () => {
+                    irParaSlide(parseInt(dot.dataset.slide));
+                });
+            });
             
             // Event Listeners - Exportação/Importação de Dados
             document.getElementById('export-data-btn').addEventListener('click', toggleExportDropdown);
@@ -1923,18 +2248,16 @@
                     ];
                     localStorage.setItem('ocorrencias', JSON.stringify(ocorrenciasDefault));
                     
-                    // Atribuições (vinculando operadores a setores ou máquinas)
+                    // Atribuições (vinculando operadores a máquinas por padrão)
                     const atribuicoesDefault = [
-                        { origem: 'Manutenção', operador: 'Adriano' },
-                        { origem: 'Manutenção', operador: 'Carlos Humberto' },
-                        { origem: 'Produção', operador: 'Diego Ferreira' },
-                        { origem: 'Produção', operador: 'Josué Cardim' },
-                        { origem: 'Produção', operador: 'Fernando Satiro' },
-                        { origem: 'Produção', operador: 'Jozias' },
-                        { origem: 'PCP', operador: 'Everton' },
-                        { origem: 'PCP', operador: 'Leandro Nunes' },
-                        { origem: 'Qualidade', operador: 'Gustavo Gomes' },
-                        { origem: 'Sesmt', operador: 'Gabriel Ferreira' }
+                        { origem: 'LM 1', operador: 'Diego Ferreira' },
+                        { origem: 'LM 2', operador: 'Josué Cardim' },
+                        { origem: 'T10', operador: 'Fernando Satiro' },
+                        { origem: 'T14', operador: 'Jozias' },
+                        { origem: 'OMP1', operador: 'Willian Alves' },
+                        { origem: 'Forno', operador: 'Genilson' },
+                        { origem: 'EVG', operador: 'Carlos Humberto' },
+                        { origem: 'EUROLLS', operador: 'Adriano' }
                     ];
                     localStorage.setItem('atribuicoes', JSON.stringify(atribuicoesDefault));
                 }
@@ -2040,6 +2363,8 @@
                     case 'dashboard':
                         title = 'Dashboard';
                         atualizarDashboard();
+                        // Adicionar animações aos elementos do dashboard
+                        startDashboardAnimations();
                         break;
                     case 'relatorios':
                         title = 'Relatórios';
@@ -2047,6 +2372,70 @@
                         break;
                 }
                 document.getElementById('page-title').textContent = title;
+            }
+            
+            // Functions - Tutorial em Slides
+            function abrirTutorial() {
+                document.getElementById('tutorial-modal').classList.remove('hidden');
+                irParaSlide(1);
+            }
+            
+            function fecharTutorial() {
+                document.getElementById('tutorial-modal').classList.add('hidden');
+            }
+            
+            function mostrarSlideAnterior() {
+                if (currentSlide > 1) {
+                    irParaSlide(currentSlide - 1);
+                }
+            }
+            
+            function mostrarProximoSlide() {
+                const totalSlides = document.querySelectorAll('.slide').length;
+                if (currentSlide < totalSlides) {
+                    irParaSlide(currentSlide + 1);
+                } else {
+                    fecharTutorial();
+                }
+            }
+            
+            function irParaSlide(numero) {
+                // Ocultar slide atual
+                document.querySelectorAll('.slide').forEach(slide => {
+                    slide.classList.remove('active');
+                });
+                
+                // Desmarcar ponto atual
+                document.querySelectorAll('.slide-dot').forEach(dot => {
+                    dot.classList.remove('active');
+                });
+                
+                // Mostrar novo slide
+                document.getElementById(`slide-${numero}`).classList.add('active');
+                
+                // Marcar novo ponto
+                document.querySelector(`.slide-dot[data-slide="${numero}"]`).classList.add('active');
+                
+                // Atualizar variável
+                currentSlide = numero;
+                
+                // Atualizar botões
+                const totalSlides = document.querySelectorAll('.slide').length;
+                
+                // Atualizar texto do botão próximo no último slide
+                if (currentSlide === totalSlides) {
+                    document.getElementById('next-slide').innerHTML = 'Concluir<i class="fas fa-check ml-2"></i>';
+                } else {
+                    document.getElementById('next-slide').innerHTML = 'Próximo<i class="fas fa-arrow-right ml-2"></i>';
+                }
+                
+                // Desabilitar botão anterior no primeiro slide
+                document.getElementById('prev-slide').disabled = currentSlide === 1;
+                if (currentSlide === 1) {
+                    document.getElementById('prev-slide').classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    document.getElementById('prev-slide').classList.remove('opacity-50', 'cursor-not-allowed');
+                }
             }
             
             // Functions - Ajuda e Configurações
@@ -2109,14 +2498,14 @@
                 
                 // Reset das classes dos tabs
                 document.querySelectorAll('[id^="admin-tab-"]').forEach(el => {
-                    el.classList.remove('bg-primary', 'text-white');
-                    el.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-200', 'dark:hover:bg-gray-700');
+                    el.classList.remove('bg-primary', 'text-black');
+                    el.classList.add('hover:bg-gray-200', 'dark:hover:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
                 });
                 
                 // Ativar tab selecionado
                 document.getElementById(`admin-secao-${tab}`).classList.remove('hidden');
-                document.getElementById(`admin-tab-${tab}`).classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-200', 'dark:hover:bg-gray-700');
-                document.getElementById(`admin-tab-${tab}`).classList.add('bg-primary', 'text-white');
+                document.getElementById(`admin-tab-${tab}`).classList.remove('hover:bg-gray-200', 'dark:hover:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                document.getElementById(`admin-tab-${tab}`).classList.add('bg-primary', 'text-black');
             }
             
             function abrirAlterarSenha() {
@@ -2161,7 +2550,7 @@
                 
                 maquinas.forEach(maquina => {
                     const cardMaquina = document.createElement('div');
-                    cardMaquina.className = 'bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer premium-card flex flex-col items-center text-center';
+                    cardMaquina.className = 'bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer premium-card flex flex-col items-center text-center jal-card';
                     cardMaquina.innerHTML = `
                         <div class="text-4xl mb-4 text-primary dark:text-primary-dark">
                             <i class="fas fa-cogs"></i>
@@ -2192,6 +2581,31 @@
                 carregarSetoresSelect();
                 carregarMotivosSelect();
                 carregarRegistros();
+                
+                // Pré-carregar operadores para a máquina selecionada
+                preCarregarOperadores();
+            }
+            
+            function preCarregarOperadores() {
+                const useBindingMaquinas = localStorage.getItem(OPERATOR_BINDING_KEY) === 'true';
+                
+                if (useBindingMaquinas) {
+                    // Caso 1: A vinculação é por máquina
+                    // Obtém operadores associados à máquina atual
+                    filtrarOperadoresPorAtribuicao();
+                } else {
+                    // Mostrar todos os setores
+                    const setores = JSON.parse(localStorage.getItem('setores') || '[]');
+                    const selectSetor = document.getElementById('setor');
+                    
+                    selectSetor.innerHTML = '<option value="">Selecione o setor</option>';
+                    setores.forEach(setor => {
+                        const option = document.createElement('option');
+                        option.value = setor;
+                        option.textContent = setor;
+                        selectSetor.appendChild(option);
+                    });
+                }
             }
             
             function voltarParaSelecaoMaquina() {
@@ -3293,11 +3707,18 @@
                 localStorage.setItem('registros', JSON.stringify(registros));
                 
                 // Resetar formulário
-                form.reset();
+                document.getElementById('parada-form').reset();
                 
                 // Reinicializar selects e definir a data atual novamente
                 carregarSetoresSelect();
-                document.getElementById('operador').innerHTML = '<option value="">Selecione o operador</option>';
+                
+                // Restaurar operadores para a máquina selecionada
+                if (localStorage.getItem(OPERATOR_BINDING_KEY) === 'true') {
+                    filtrarOperadoresPorAtribuicao();
+                } else {
+                    document.getElementById('operador').innerHTML = '<option value="">Selecione o operador</option>';
+                }
+                
                 document.getElementById('ocorrencia').innerHTML = '<option value="">Selecione uma ocorrência</option>';
                 document.getElementById('data').value = `${anoAtual}-${mesAtual}-${diaAtual}`;
                 
@@ -3405,7 +3826,6 @@
                 
                 row.innerHTML = `
                     <td class="px-4 py-3 whitespace-nowrap">${formatarDataSimples(registro.data)}</td>
-                    <td class="px-4 py-3">${registro.maquina}</td>
                     <td class="px-4 py-3">${registro.setor || '-'}</td>
                     <td class="px-4 py-3">${registro.operador}</td>
                     <td class="px-4 py-3 font-medium">${registro.codigo}</td>
@@ -3501,7 +3921,7 @@
             }
             
             function confirmarLimparDados() {
-                confirmarAcao('Limpar Dados', `Tem certeza que deseja excluir TODOS os registros da máquina "${maquinaAtiva}"? Esta ação não pode ser desfeita.`, limparDados);
+                confirmarAcao('Limpar Dados', `Tem certeza que deseja excluir TODOS os registros da máquina "${maquinaAtiva}"? Esta ação não pode ser desfeita.`, limparDados, 'danger');
             }
             
             function limparDados() {
@@ -3591,7 +4011,7 @@
                 const button = document.createElement('button');
                 button.className = `relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                     pagina === currentPage
-                    ? 'bg-primary border-primary text-white'
+                    ? 'bg-primary border-primary text-black'
                     : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`;
                 button.textContent = pagina;
@@ -3617,6 +4037,28 @@
                 
                 currentPage = pagina;
                 carregarRegistros();
+            }
+            
+            // Functions - Dashboard Animations
+            function startDashboardAnimations() {
+                // Remover classe de carregamento dos contêineres de gráficos
+                setTimeout(() => {
+                    document.querySelectorAll('.chart-loading').forEach(container => {
+                        container.classList.remove('chart-loading');
+                    });
+                }, 800);
+                
+                // Animar contadores
+                setTimeout(() => {
+                    document.querySelectorAll('.counter-animation').forEach(counter => {
+                        counter.classList.add('animate');
+                        
+                        // Remover a classe após a animação
+                        setTimeout(() => {
+                            counter.classList.remove('animate');
+                        }, 1000);
+                    });
+                }, 300);
             }
             
             // Functions - Dashboard
@@ -3727,16 +4169,16 @@
             
             function gerarCores(quantidade, alpha = 0.7) {
                 const colors = [
-                    `rgba(59, 130, 246, ${alpha})`,   // Azul
-                    `rgba(16, 185, 129, ${alpha})`,   // Verde
-                    `rgba(239, 68, 68, ${alpha})`,    // Vermelho
-                    `rgba(245, 158, 11, ${alpha})`,   // Amarelo
-                    `rgba(139, 92, 246, ${alpha})`,   // Roxo
-                    `rgba(236, 72, 153, ${alpha})`,   // Rosa
-                    `rgba(14, 165, 233, ${alpha})`,   // Azul claro
-                    `rgba(249, 115, 22, ${alpha})`,   // Laranja
-                    `rgba(6, 182, 212, ${alpha})`,    // Ciano
-                    `rgba(168, 85, 247, ${alpha})`,   // Roxo claro
+                    `rgba(229, 62, 62, ${alpha})`,   // Vermelho (JAL)
+                    `rgba(249, 115, 22, ${alpha})`,  // Laranja
+                    `rgba(245, 158, 11, ${alpha})`,  // Amarelo
+                    `rgba(16, 185, 129, ${alpha})`,  // Verde
+                    `rgba(14, 165, 233, ${alpha})`,  // Azul
+                    `rgba(139, 92, 246, ${alpha})`,  // Roxo
+                    `rgba(236, 72, 153, ${alpha})`,  // Rosa
+                    `rgba(209, 43, 43, ${alpha})`,   // Vermelho escuro
+                    `rgba(20, 184, 166, ${alpha})`,  // Turquesa
+                    `rgba(168, 85, 247, ${alpha})`,  // Violeta
                 ];
                 
                 const result = [];
@@ -3780,26 +4222,21 @@
                             legend: {
                                 position: 'right',
                                 labels: {
-                                    boxWidth: 12,
-                                    padding: 15
+                                    boxboxWidth: 15,
+                                    padding: 15,
+                                    usePointStyle: true
                                 }
                             },
                             tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const label = context.label || '';
-                                        const value = context.raw || 0;
-                                        const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
-                                        const percentage = ((value / total) * 100).toFixed(1);
-                                        return `${label}: ${value} (${percentage}%)`;
-                                    }
-                                }
+                                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                padding: 10,
+                                cornerRadius: 3
                             }
                         }
                     }
                 });
                 
-                // Salvar referência para destruir posteriormente
+                // Salvar referência para destruir depois
                 document.getElementById('motivos-chart')._chart = chart;
             }
             
@@ -3810,48 +4247,50 @@
                 const hoje = new Date();
                 const ultimos7Dias = [];
                 for (let i = 6; i >= 0; i--) {
-                    const data = new Date(hoje);
+                    const data = new Date();
                     data.setDate(hoje.getDate() - i);
-                    const dataFormatada = data.toISOString().split('T')[0];
-                    ultimos7Dias.push(dataFormatada);
+                    
+                    const ano = data.getFullYear();
+                    const mes = String(data.getMonth() + 1).padStart(2, '0');
+                    const dia = String(data.getDate()).padStart(2, '0');
+                    
+                    ultimos7Dias.push(`${ano}-${mes}-${dia}`);
                 }
                 
-                // Calcular tempo por dia
-                const tempoPorDia = {};
-                ultimos7Dias.forEach(dia => {
-                    tempoPorDia[dia] = 0;
+                // Calcular tempo total por dia
+                const temposPorDia = {};
+                ultimos7Dias.forEach(data => {
+                    temposPorDia[data] = 0;
                 });
                 
                 registros.forEach(registro => {
                     if (ultimos7Dias.includes(registro.data)) {
-                        tempoPorDia[registro.data] += parseFloat(registro.duracao) || 0;
+                        temposPorDia[registro.data] += parseFloat(registro.duracao) || 0;
                     }
                 });
                 
                 // Preparar dados para o gráfico
-                const diasFormatados = ultimos7Dias.map(dia => {
-                    const [ano, mes, dd] = dia.split('-');
-                    return `${dd}/${mes}`;
-                });
+                const labels = ultimos7Dias.map(data => formatarDataSimples(data));
+                const data = ultimos7Dias.map(data => temposPorDia[data]);
                 
-                const tempos = ultimos7Dias.map(dia => {
-                    // Converter para horas se necessário
-                    if (localStorage.getItem(TIME_UNIT_KEY) === 'horas') {
-                        return (tempoPorDia[dia] / 60).toFixed(2);
+                // Converter para horas se necessário
+                const useHoras = localStorage.getItem(TIME_UNIT_KEY) === 'horas';
+                if (useHoras) {
+                    for (let i = 0; i < data.length; i++) {
+                        data[i] = (data[i] / 60).toFixed(2);
                     }
-                    return tempoPorDia[dia];
-                });
+                }
                 
                 // Criar gráfico
                 const chart = new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: diasFormatados,
+                        labels: labels,
                         datasets: [{
-                            label: `Tempo de Parada (${localStorage.getItem(TIME_UNIT_KEY) === 'horas' ? 'horas' : 'minutos'})`,
-                            data: tempos,
-                            backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                            borderColor: 'rgba(59, 130, 246, 1)',
+                            label: `Tempo total (${useHoras ? 'horas' : 'minutos'})`,
+                            data: data,
+                            backgroundColor: 'rgba(229, 62, 62, 0.7)',
+                            borderColor: 'rgba(197, 48, 48, 1)',
                             borderWidth: 1
                         }]
                     },
@@ -3863,7 +4302,7 @@
                                 beginAtZero: true,
                                 title: {
                                     display: true,
-                                    text: localStorage.getItem(TIME_UNIT_KEY) === 'horas' ? 'Horas' : 'Minutos'
+                                    text: useHoras ? 'Horas' : 'Minutos'
                                 }
                             },
                             x: {
@@ -3872,34 +4311,53 @@
                                     text: 'Data'
                                 }
                             }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                padding: 10,
+                                cornerRadius: 3
+                            }
+                        },
+                        animation: {
+                            duration: 1000
                         }
                     }
                 });
                 
-                // Salvar referência para destruir posteriormente
+                // Salvar referência para destruir depois
                 document.getElementById('tempo-diario-chart')._chart = chart;
             }
             
             function criarGraficoOcorrencias(registros) {
                 const ctx = document.getElementById('ocorrencias-chart').getContext('2d');
                 
-                // Contar tempo por ocorrência
+                // Agrupar por ocorrência e calcular tempo total
                 const tempoPorOcorrencia = {};
+                
                 registros.forEach(registro => {
                     const ocorrencia = registro.ocorrencia;
-                    tempoPorOcorrencia[ocorrencia] = (tempoPorOcorrencia[ocorrencia] || 0) + parseFloat(registro.duracao);
+                    if (!tempoPorOcorrencia[ocorrencia]) {
+                        tempoPorOcorrencia[ocorrencia] = 0;
+                    }
+                    tempoPorOcorrencia[ocorrencia] += parseFloat(registro.duracao) || 0;
                 });
                 
-                // Ordenar por tempo (decrescente)
-                const ocorrencias = Object.keys(tempoPorOcorrencia).sort((a, b) => 
-                    tempoPorOcorrencia[b] - tempoPorOcorrencia[a]
-                );
+                // Ordenar ocorrências por tempo (decrescente)
+                const ocorrenciasOrdenadas = Object.keys(tempoPorOcorrencia).sort((a, b) => {
+                    return tempoPorOcorrencia[b] - tempoPorOcorrencia[a];
+                });
                 
-                // Limitar a 15 ocorrências para melhor visualização
-                const topOcorrencias = ocorrencias.slice(0, 15);
+                // Limitar a 15 ocorrências para não sobrecarregar o gráfico
+                const ocorrenciasTop = ocorrenciasOrdenadas.slice(0, 15);
                 
                 // Preparar dados para o gráfico
-                const tempos = topOcorrencias.map(ocorrencia => {
+                const labels = ocorrenciasTop;
+                const data = ocorrenciasTop.map(ocorrencia => {
                     // Converter para horas se necessário
                     if (localStorage.getItem(TIME_UNIT_KEY) === 'horas') {
                         return (tempoPorOcorrencia[ocorrencia] / 60).toFixed(2);
@@ -3907,18 +4365,17 @@
                     return tempoPorOcorrencia[ocorrencia];
                 });
                 
-                const backgroundColor = gerarCores(topOcorrencias.length, 0.6);
+                const useHoras = localStorage.getItem(TIME_UNIT_KEY) === 'horas';
                 
                 // Criar gráfico
                 const chart = new Chart(ctx, {
-                    type: 'bar',
+                    type: 'horizontalBar',
                     data: {
-                        labels: topOcorrencias,
+                        labels: labels,
                         datasets: [{
-                            label: `Tempo de Parada (${localStorage.getItem(TIME_UNIT_KEY) === 'horas' ? 'horas' : 'minutos'})`,
-                            data: tempos,
-                            backgroundColor: backgroundColor,
-                            borderColor: backgroundColor.map(color => color.replace(/, \d\.\d\)/, ', 1)')),
+                            label: `Tempo total (${useHoras ? 'horas' : 'minutos'})`,
+                            data: data,
+                            backgroundColor: gerarCores(labels.length),
                             borderWidth: 1
                         }]
                     },
@@ -3931,19 +4388,27 @@
                                 beginAtZero: true,
                                 title: {
                                     display: true,
-                                    text: localStorage.getItem(TIME_UNIT_KEY) === 'horas' ? 'Horas' : 'Minutos'
+                                    text: useHoras ? 'Horas' : 'Minutos'
                                 }
                             }
                         },
                         plugins: {
                             legend: {
                                 display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                padding: 10,
+                                cornerRadius: 3
                             }
+                        },
+                        animation: {
+                            duration: 1200
                         }
                     }
                 });
                 
-                // Salvar referência para destruir posteriormente
+                // Salvar referência para destruir depois
                 document.getElementById('ocorrencias-chart')._chart = chart;
             }
             
@@ -3953,364 +4418,412 @@
                 const registros = JSON.parse(localStorage.getItem('registros') || '[]')
                     .filter(registro => registro.maquina === maquinaAtiva);
                 
-                // Preparar registros para relatórios
-                const hoje = new Date().toISOString().split('T')[0];
+                // Datas padrão para relatório personalizado
+                const hoje = new Date();
+                const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
                 
-                // Dados para relatório diário (hoje)
-                const registrosHoje = registros.filter(registro => registro.data === hoje);
-                const totalParadasHoje = registrosHoje.length;
-                let tempoTotalHoje = 0;
-                registrosHoje.forEach(registro => {
-                    tempoTotalHoje += parseFloat(registro.duracao) || 0;
+                document.getElementById('relatorio-data-inicio').value = inicioMes.toISOString().split('T')[0];
+                document.getElementById('relatorio-data-fim').value = hoje.toISOString().split('T')[0];
+                
+                // Carregar operadores no filtro de relatório
+                const relatOperador = document.getElementById('relatorio-operador');
+                relatOperador.innerHTML = '<option value="">Todos os operadores</option>';
+                
+                const operadores = new Set();
+                registros.forEach(registro => {
+                    operadores.add(registro.operador);
                 });
                 
-                // Encontrar motivo principal hoje
-                const motivosHoje = {};
-                registrosHoje.forEach(registro => {
-                    motivosHoje[registro.motivo] = (motivosHoje[registro.motivo] || 0) + 1;
+                Array.from(operadores).sort().forEach(operador => {
+                    const option = document.createElement('option');
+                    option.value = operador;
+                    option.textContent = operador;
+                    relatOperador.appendChild(option);
                 });
-                let motivoPrincipalHoje = '-';
-                let maxCountHoje = 0;
-                for (const [motivo, count] of Object.entries(motivosHoje)) {
-                    if (count > maxCountHoje) {
-                        maxCountHoje = count;
-                        motivoPrincipalHoje = motivo;
-                    }
-                }
                 
-                // Formatar tempo
-                const formatarTempo = (tempo) => {
-                    if (localStorage.getItem(TIME_UNIT_KEY) === 'horas') {
-                        return `${(tempo / 60).toFixed(2)} h`;
-                    }
-                    return `${tempo} min`;
-                };
+                // Atualizar resumos dos relatórios pré-definidos
+                atualizarResumoDiario(registros);
+                atualizarResumoSemanal(registros);
+                atualizarResumoMensal(registros);
                 
-                // Atualizar resumo do relatório diário
-                document.getElementById('relatorio-diario-paradas').textContent = totalParadasHoje;
-                document.getElementById('relatorio-diario-tempo').textContent = formatarTempo(tempoTotalHoje);
-                document.getElementById('relatorio-diario-motivo').textContent = motivoPrincipalHoje;
+                // Atualizar histórico de relatórios
+                atualizarHistoricoRelatorios();
+            }
+            
+            function atualizarResumoDiario(registros) {
+                // Obter registros das últimas 24 horas
+                const hoje = new Date();
+                const ontem = new Date(hoje);
+                ontem.setDate(hoje.getDate() - 1);
                 
-                // Calcular dados para relatório semanal (últimos 7 dias)
-                const data7DiasAtras = new Date();
-                data7DiasAtras.setDate(data7DiasAtras.getDate() - 7);
-                const registrosSemana = registros.filter(registro => {
+                const registrosDiarios = registros.filter(registro => {
                     const dataRegistro = new Date(registro.data);
-                    return dataRegistro >= data7DiasAtras;
+                    return dataRegistro >= ontem && dataRegistro <= hoje;
                 });
                 
-                const totalParadasSemana = registrosSemana.length;
-                let tempoTotalSemana = 0;
-                registrosSemana.forEach(registro => {
-                    tempoTotalSemana += parseFloat(registro.duracao) || 0;
-                });
+                // Calcular estatísticas
+                const totalParadas = registrosDiarios.length;
+                let tempoTotal = 0;
                 
-                // Encontrar motivo principal semana
-                const motivosSemana = {};
-                registrosSemana.forEach(registro => {
-                    motivosSemana[registro.motivo] = (motivosSemana[registro.motivo] || 0) + 1;
-                });
-                let motivoPrincipalSemana = '-';
-                let maxCountSemana = 0;
-                for (const [motivo, count] of Object.entries(motivosSemana)) {
-                    if (count > maxCountSemana) {
-                        maxCountSemana = count;
-                        motivoPrincipalSemana = motivo;
-                    }
-                }
+                const contagemMotivos = {};
                 
-                // Atualizar resumo do relatório semanal
-                document.getElementById('relatorio-semanal-paradas').textContent = totalParadasSemana;
-                document.getElementById('relatorio-semanal-tempo').textContent = formatarTempo(tempoTotalSemana);
-                document.getElementById('relatorio-semanal-motivo').textContent = motivoPrincipalSemana;
-                
-                // Calcular dados para relatório mensal (mês atual)
-                const primeiroDiaMes = new Date();
-                primeiroDiaMes.setDate(1);
-                primeiroDiaMes.setHours(0, 0, 0, 0);
-                
-                const registrosMes = registros.filter(registro => {
-                    const dataRegistro = new Date(registro.data);
-                    return dataRegistro >= primeiroDiaMes;
-                });
-                
-                const totalParadasMes = registrosMes.length;
-                let tempoTotalMes = 0;
-                registrosMes.forEach(registro => {
-                    tempoTotalMes += parseFloat(registro.duracao) || 0;
-                });
-                
-                // Encontrar motivo principal mês
-                const motivosMes = {};
-                registrosMes.forEach(registro => {
-                    motivosMes[registro.motivo] = (motivosMes[registro.motivo] || 0) + 1;
-                });
-                let motivoPrincipalMes = '-';
-                let maxCountMes = 0;
-                for (const [motivo, count] of Object.entries(motivosMes)) {
-                    if (count > maxCountMes) {
-                        maxCountMes = count;
-                        motivoPrincipalMes = motivo;
-                    }
-                }
-                
-                // Atualizar resumo do relatório mensal
-                document.getElementById('relatorio-mensal-paradas').textContent = totalParadasMes;
-                document.getElementById('relatorio-mensal-tempo').textContent = formatarTempo(tempoTotalMes);
-                document.getElementById('relatorio-mensal-motivo').textContent = motivoPrincipalMes;
-                
-                // Preencher select de motivos para relatório personalizado
-                const relatorioMotivo = document.getElementById('relatorio-motivo');
-                if (relatorioMotivo.children.length <= 1) { // Só atualiza se não estiver preenchido
-                    motivosCache.forEach(motivo => {
-                        const option = document.createElement('option');
-                        option.value = motivo.codigo;
-                        option.textContent = `${motivo.codigo} - ${motivo.descricao}`;
-                        relatorioMotivo.appendChild(option);
-                    });
-                }
-                
-                // Preencher select de operadores para relatório personalizado
-                const relatorioOperador = document.getElementById('relatorio-operador');
-                if (relatorioOperador.children.length <= 1) { // Só atualiza se não estiver preenchido
-                    const operadoresUnicos = new Set();
-                    registros.forEach(registro => {
-                        operadoresUnicos.add(registro.operador);
-                    });
+                registrosDiarios.forEach(registro => {
+                    tempoTotal += parseFloat(registro.duracao) || 0;
                     
-                    Array.from(operadoresUnicos).sort().forEach(operador => {
-                        const option = document.createElement('option');
-                        option.value = operador;
-                        option.textContent = operador;
-                        relatorioOperador.appendChild(option);
-                    });
+                    const motivo = registro.motivo;
+                    contagemMotivos[motivo] = (contagemMotivos[motivo] || 0) + 1;
+                });
+                
+                // Encontrar motivo principal
+                let motivoPrincipal = '-';
+                let maxOcorrencias = 0;
+                
+                for (const [motivo, ocorrencias] of Object.entries(contagemMotivos)) {
+                    if (ocorrencias > maxOcorrencias) {
+                        maxOcorrencias = ocorrencias;
+                        motivoPrincipal = motivo;
+                    }
                 }
                 
-                // Definir datas padrão para relatório personalizado
-                if (!document.getElementById('relatorio-data-inicio').value) {
-                    const dataInicio = new Date();
-                    dataInicio.setMonth(dataInicio.getMonth() - 1);
-                    document.getElementById('relatorio-data-inicio').value = dataInicio.toISOString().split('T')[0];
-                    document.getElementById('relatorio-data-fim').value = new Date().toISOString().split('T')[0];
+                // Formatar tempo total
+                let tempoFormatado = tempoTotal;
+                if (localStorage.getItem(TIME_UNIT_KEY) === 'horas') {
+                    tempoFormatado = (tempoTotal / 60).toFixed(2);
                 }
+                const unidadeTempo = localStorage.getItem(TIME_UNIT_KEY) === 'horas' ? 'h' : 'min';
+                
+                // Atualizar interface
+                document.getElementById('relatorio-diario-paradas').textContent = totalParadas;
+                document.getElementById('relatorio-diario-tempo').textContent = `${tempoFormatado} ${unidadeTempo}`;
+                document.getElementById('relatorio-diario-motivo').textContent = motivoPrincipal;
+            }
+            
+            function atualizarResumoSemanal(registros) {
+                // Obter registros dos últimos 7 dias
+                const hoje = new Date();
+                const semanaAtras = new Date(hoje);
+                semanaAtras.setDate(hoje.getDate() - 7);
+                
+                const registrosSemanais = registros.filter(registro => {
+                    const dataRegistro = new Date(registro.data);
+                    return dataRegistro >= semanaAtras && dataRegistro <= hoje;
+                });
+                
+                // Calcular estatísticas
+                const totalParadas = registrosSemanais.length;
+                let tempoTotal = 0;
+                
+                const contagemMotivos = {};
+                
+                registrosSemanais.forEach(registro => {
+                    tempoTotal += parseFloat(registro.duracao) || 0;
+                    
+                    const motivo = registro.motivo;
+                    contagemMotivos[motivo] = (contagemMotivos[motivo] || 0) + 1;
+                });
+                
+                // Encontrar motivo principal
+                let motivoPrincipal = '-';
+                let maxOcorrencias = 0;
+                
+                for (const [motivo, ocorrencias] of Object.entries(contagemMotivos)) {
+                    if (ocorrencias > maxOcorrencias) {
+                        maxOcorrencias = ocorrencias;
+                        motivoPrincipal = motivo;
+                    }
+                }
+                
+                // Formatar tempo total
+                let tempoFormatado = tempoTotal;
+                if (localStorage.getItem(TIME_UNIT_KEY) === 'horas') {
+                    tempoFormatado = (tempoTotal / 60).toFixed(2);
+                }
+                const unidadeTempo = localStorage.getItem(TIME_UNIT_KEY) === 'horas' ? 'h' : 'min';
+                
+                // Atualizar interface
+                document.getElementById('relatorio-semanal-paradas').textContent = totalParadas;
+                document.getElementById('relatorio-semanal-tempo').textContent = `${tempoFormatado} ${unidadeTempo}`;
+                document.getElementById('relatorio-semanal-motivo').textContent = motivoPrincipal;
+            }
+            
+            function atualizarResumoMensal(registros) {
+                // Obter registros do mês atual
+                const hoje = new Date();
+                const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+                
+                const registrosMensais = registros.filter(registro => {
+                    const dataRegistro = new Date(registro.data);
+                    return dataRegistro >= inicioMes && dataRegistro <= hoje;
+                });
+                
+                // Calcular estatísticas
+                const totalParadas = registrosMensais.length;
+                let tempoTotal = 0;
+                
+                const contagemMotivos = {};
+                
+                registrosMensais.forEach(registro => {
+                    tempoTotal += parseFloat(registro.duracao) || 0;
+                    
+                    const motivo = registro.motivo;
+                    contagemMotivos[motivo] = (contagemMotivos[motivo] || 0) + 1;
+                });
+                
+                // Encontrar motivo principal
+                let motivoPrincipal = '-';
+                let maxOcorrencias = 0;
+                
+                for (const [motivo, ocorrencias] of Object.entries(contagemMotivos)) {
+                    if (ocorrencias > maxOcorrencias) {
+                        maxOcorrencias = ocorrencias;
+                        motivoPrincipal = motivo;
+                    }
+                }
+                
+                // Formatar tempo total
+                let tempoFormatado = tempoTotal;
+                if (localStorage.getItem(TIME_UNIT_KEY) === 'horas') {
+                    tempoFormatado = (tempoTotal / 60).toFixed(2);
+                }
+                const unidadeTempo = localStorage.getItem(TIME_UNIT_KEY) === 'horas' ? 'h' : 'min';
+                
+                // Atualizar interface
+                document.getElementById('relatorio-mensal-paradas').textContent = totalParadas;
+                document.getElementById('relatorio-mensal-tempo').textContent = `${tempoFormatado} ${unidadeTempo}`;
+                document.getElementById('relatorio-mensal-motivo').textContent = motivoPrincipal;
+            }
+            
+            function exportarRelatorioDiario() {
+                // Obter registros das últimas 24 horas
+                const hoje = new Date();
+                const ontem = new Date(hoje);
+                ontem.setDate(hoje.getDate() - 1);
+                
+                const registros = JSON.parse(localStorage.getItem('registros') || '[]')
+                    .filter(registro => registro.maquina === maquinaAtiva)
+                    .filter(registro => {
+                        const dataRegistro = new Date(registro.data);
+                        return dataRegistro >= ontem && dataRegistro <= hoje;
+                    });
+                
+                if (registros.length === 0) {
+                    mostrarConfirmacao('error', 'Não há registros nas últimas 24 horas para exportar');
+                    return;
+                }
+                
+                // Gerar relatório
+                gerarRelatorioPDF(registros, { titulo: `Relatório Diário - ${maquinaAtiva}` });
+            }
+            
+            function exportarRelatorioSemanal() {
+                // Obter registros dos últimos 7 dias
+                const hoje = new Date();
+                const semanaAtras = new Date(hoje);
+                semanaAtras.setDate(hoje.getDate() - 7);
+                
+                const registros = JSON.parse(localStorage.getItem('registros') || '[]')
+                    .filter(registro => registro.maquina === maquinaAtiva)
+                    .filter(registro => {
+                        const dataRegistro = new Date(registro.data);
+                        return dataRegistro >= semanaAtras && dataRegistro <= hoje;
+                    });
+                
+                if (registros.length === 0) {
+                    mostrarConfirmacao('error', 'Não há registros nos últimos 7 dias para exportar');
+                    return;
+                }
+                
+                // Gerar relatório
+                gerarRelatorioPDF(registros, { titulo: `Relatório Semanal - ${maquinaAtiva}` });
+            }
+            
+            function exportarRelatorioMensal() {
+                // Obter registros do mês atual
+                const hoje = new Date();
+                const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+                
+                const registros = JSON.parse(localStorage.getItem('registros') || '[]')
+                    .filter(registro => registro.maquina === maquinaAtiva)
+                    .filter(registro => {
+                        const dataRegistro = new Date(registro.data);
+                        return dataRegistro >= inicioMes && dataRegistro <= hoje;
+                    });
+                
+                if (registros.length === 0) {
+                    mostrarConfirmacao('error', 'Não há registros no mês atual para exportar');
+                    return;
+                }
+                
+                // Gerar relatório
+                gerarRelatorioPDF(registros, { titulo: `Relatório Mensal - ${maquinaAtiva}` });
             }
             
             function gerarRelatorioPersonalizado() {
                 const dataInicio = document.getElementById('relatorio-data-inicio').value;
                 const dataFim = document.getElementById('relatorio-data-fim').value;
-                const tipo = document.getElementById('relatorio-tipo').value;
                 const motivo = document.getElementById('relatorio-motivo').value;
                 const operador = document.getElementById('relatorio-operador').value;
+                const tipo = document.getElementById('relatorio-tipo').value;
                 
                 if (!dataInicio || !dataFim) {
-                    mostrarConfirmacao('error', 'Por favor, selecione as datas inicial e final');
+                    mostrarConfirmacao('error', 'Por favor, selecione as datas de início e fim');
                     return;
                 }
                 
-                // Obter registros para a máquina selecionada
+                // Validar datas
+                if (new Date(dataInicio) > new Date(dataFim)) {
+                    mostrarConfirmacao('error', 'A data de início deve ser anterior à data de fim');
+                    return;
+                }
+                
+                // Obter registros filtrados
                 let registros = JSON.parse(localStorage.getItem('registros') || '[]')
-                    .filter(registro => registro.maquina === maquinaAtiva);
+                    .filter(registro => registro.maquina === maquinaAtiva)
+                    .filter(registro => {
+                        const dataRegistro = registro.data;
+                        return dataRegistro >= dataInicio && dataRegistro <= dataFim;
+                    });
                 
-                // Aplicar filtros de data
-                registros = registros.filter(registro => {
-                    return registro.data >= dataInicio && registro.data <= dataFim;
-                });
-                
-                // Aplicar filtro de motivo
+                // Aplicar filtros adicionais
                 if (motivo) {
                     registros = registros.filter(registro => registro.codigo.startsWith(motivo + '-'));
                 }
                 
-                // Aplicar filtro de operador
                 if (operador) {
                     registros = registros.filter(registro => registro.operador === operador);
                 }
                 
                 if (registros.length === 0) {
-                    mostrarConfirmacao('error', 'Nenhum registro encontrado para os filtros selecionados');
+                    mostrarConfirmacao('error', 'Não há registros para os filtros selecionados');
                     return;
                 }
                 
-                // Gerar relatório conforme tipo selecionado
+                // Gerar relatório
+                const titulo = `Relatório Personalizado - ${maquinaAtiva} (${formatarDataSimples(dataInicio)} a ${formatarDataSimples(dataFim)})`;
+                const opcoes = {
+                    titulo,
+                    motivo: motivo ? document.getElementById('relatorio-motivo').options[document.getElementById('relatorio-motivo').selectedIndex].text : null,
+                    operador
+                };
+                
                 if (tipo === 'pdf') {
-                    gerarRelatorioPDF(registros, { dataInicio, dataFim, motivo, operador });
+                    gerarRelatorioPDF(registros, opcoes);
                 } else {
-                    gerarRelatorioExcel(registros, { dataInicio, dataFim, motivo, operador });
+                    gerarRelatorioExcel(registros, opcoes);
                 }
             }
             
-            function exportarRelatorioDiario() {
-                const hoje = new Date().toISOString().split('T')[0];
-                
-                // Obter registros para a máquina selecionada hoje
-                const registros = JSON.parse(localStorage.getItem('registros') || '[]')
-                    .filter(registro => registro.maquina === maquinaAtiva && registro.data === hoje);
-                
-                if (registros.length === 0) {
-                    mostrarConfirmacao('error', 'Nenhum registro encontrado para hoje');
-                    return;
-                }
-                
-                gerarRelatorioPDF(registros, { 
-                    titulo: 'Relatório Diário', 
-                    dataInicio: hoje, 
-                    dataFim: hoje 
-                });
-            }
-            
-            function exportarRelatorioSemanal() {
-                // Calcular data de 7 dias atrás
-                const dataFim = new Date().toISOString().split('T')[0];
-                const dataInicio = new Date();
-                dataInicio.setDate(dataInicio.getDate() - 7);
-                const dataInicioStr = dataInicio.toISOString().split('T')[0];
-                
-                // Obter registros para a máquina selecionada na última semana
-                const registros = JSON.parse(localStorage.getItem('registros') || '[]')
-                    .filter(registro => {
-                        return registro.maquina === maquinaAtiva && 
-                               registro.data >= dataInicioStr && 
-                               registro.data <= dataFim;
-                    });
-                
-                if (registros.length === 0) {
-                    mostrarConfirmacao('error', 'Nenhum registro encontrado para a última semana');
-                    return;
-                }
-                
-                gerarRelatorioPDF(registros, { 
-                    titulo: 'Relatório Semanal', 
-                    dataInicio: dataInicioStr, 
-                    dataFim 
-                });
-            }
-            
-            function exportarRelatorioMensal() {
-                // Calcular primeiro dia do mês
-                const hoje = new Date();
-                const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-                const dataInicio = primeiroDiaMes.toISOString().split('T')[0];
-                const dataFim = hoje.toISOString().split('T')[0];
-                
-                // Obter registros para a máquina selecionada no mês atual
-                const registros = JSON.parse(localStorage.getItem('registros') || '[]')
-                    .filter(registro => {
-                        return registro.maquina === maquinaAtiva && 
-                               registro.data >= dataInicio && 
-                               registro.data <= dataFim;
-                    });
-                
-                if (registros.length === 0) {
-                    mostrarConfirmacao('error', 'Nenhum registro encontrado para o mês atual');
-                    return;
-                }
-                
-                gerarRelatorioPDF(registros, { 
-                    titulo: 'Relatório Mensal', 
-                    dataInicio, 
-                    dataFim 
-                });
-            }
-            
-            // Functions - Exportação
             function gerarRelatorioPDF(registros, opcoes) {
                 try {
-                    // Criar novo documento PDF
-                    const doc = new jsPDF();
+                    showLoading('Gerando relatório em PDF...');
                     
-                    // Configurar título
+                    // Ordenar registros por data (mais recentes primeiro)
+                    registros = registros.sort((a, b) => new Date(b.data) - new Date(a.data));
+                    
+                    // Inicializar PDF
+                    const doc = new jspdf.jsPDF();
+                    
+                    // Título e cabeçalho
                     const titulo = opcoes.titulo || `Relatório de Paradas - ${maquinaAtiva}`;
+                    doc.setFont('helvetica', 'bold');
                     doc.setFontSize(18);
-                    doc.setTextColor(50, 50, 50);
-                    doc.text(titulo, 105, 15, { align: 'center' });
+                    doc.setTextColor(229, 62, 62); // Cor JAL
+                    doc.text(titulo, 105, 20, { align: 'center' });
                     
-                    // Adicionar informações do relatório
-                    doc.setFontSize(11);
+                    // Informações adicionais
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(10);
                     doc.setTextColor(100, 100, 100);
+                    doc.text(`Gerado em: ${formatarDataCompleta(new Date().toISOString())}`, 105, 30, { align: 'center' });
                     
-                    const dataInicio = formatarDataSimples(opcoes.dataInicio);
-                    const dataFim = formatarDataSimples(opcoes.dataFim);
+                    // Adicionar filtros se houver
+                    let yPos = 50;
+                    doc.setFontSize(12);
+                    doc.setTextColor(50, 50, 50);
                     
-                    doc.text(`Máquina: ${maquinaAtiva}`, 14, 25);
-                    doc.text(`Período: ${dataInicio} a ${dataFim}`, 14, 32);
-                    
-                    if (opcoes.motivo) {
-                        // Encontrar descrição do motivo
-                        const motivo = motivosCache.find(m => m.codigo === parseInt(opcoes.motivo));
-                        if (motivo) {
-                            doc.text(`Motivo: ${motivo.codigo} - ${motivo.descricao}`, 14, 39);
+                    if (opcoes.motivo || opcoes.operador) {
+                        doc.text('Filtros aplicados:', 20, yPos);
+                        yPos += 7;
+                        
+                        if (opcoes.motivo) {
+                            doc.text(`Motivo: ${opcoes.motivo}`, 25, yPos);
+                            yPos += 7;
                         }
+                        
+                        if (opcoes.operador) {
+                            doc.text(`Operador: ${opcoes.operador}`, 25, yPos);
+                            yPos += 7;
+                        }
+                        
+                        yPos += 5;
                     }
                     
-                    if (opcoes.operador) {
-                        doc.text(`Operador: ${opcoes.operador}`, 14, opcoes.motivo ? 46 : 39);
-                    }
+                    // Estatísticas
+                    doc.setFontSize(12);
+                    doc.text('Resumo:', 20, opcoes.motivo || opcoes.operador ? yPos : 50);
                     
-                    // Adicionar data de geração
-                    doc.text(`Gerado em: ${formatarDataCompleta(new Date().toISOString())}`, 14, opcoes.motivo || opcoes.operador ? 53 : 39);
-                    
-                    // Adicionar resumo
-                    doc.setFontSize(14);
-                    doc.setTextColor(59, 130, 246);
-                    doc.text('Resumo', 14, opcoes.motivo || opcoes.operador ? 63 : 49);
-                    
-                    // Calcular totais
-                    const totalParadas = registros.length;
                     let tempoTotal = 0;
                     registros.forEach(registro => {
                         tempoTotal += parseFloat(registro.duracao) || 0;
                     });
                     
-                    // Formatar tempo
+                    const useHoras = localStorage.getItem(TIME_UNIT_KEY) === 'horas';
                     let tempoFormatado = tempoTotal;
-                    const unidade = localStorage.getItem(TIME_UNIT_KEY) === 'horas' ? 'horas' : 'minutos';
-                    if (localStorage.getItem(TIME_UNIT_KEY) === 'horas') {
+                    if (useHoras) {
                         tempoFormatado = (tempoTotal / 60).toFixed(2);
                     }
+                    const unidadeTempo = useHoras ? 'horas' : 'minutos';
                     
-                    // Adicionar resumo ao PDF
-                    doc.setFontSize(11);
-                    doc.setTextColor(50, 50, 50);
-                    doc.text(`Total de Paradas: ${totalParadas}`, 14, opcoes.motivo || opcoes.operador ? 70 : 56);
-                    doc.text(`Tempo Total de Parada: ${tempoFormatado} ${unidade}`, 14, opcoes.motivo || opcoes.operador ? 77 : 63);
+                    yPos = opcoes.motivo || opcoes.operador ? yPos + 7 : 57;
+                    doc.text(`Total de registros: ${registros.length}`, 25, yPos);
+                    yPos += 7;
+                    doc.text(`Tempo total parado: ${tempoFormatado} ${unidadeTempo}`, 25, yPos);
                     
-                    // Preparar dados para a tabela
-                    const tableColumn = ['Data', 'Operador', 'Código', 'Motivo', 'Ocorrência', `Duração (${unidade})`];
+                    // Configurar tabela
+                    const tableColumn = [
+                        'Data',
+                        'Setor',
+                        'Operador',
+                        'Código',
+                        'Motivo',
+                        'Ocorrência',
+                        'Duração'
+                    ];
+                    
                     const tableRows = [];
                     
-                    // Ordenar registros por data (mais recentes primeiro)
-                    registros.sort((a, b) => new Date(b.data) - new Date(a.data))
-                             .forEach(registro => {
-                                 const dataFormatada = formatarDataSimples(registro.data);
-                                 
-                                 let duracaoFormatada = registro.duracao;
-                                 if (localStorage.getItem(TIME_UNIT_KEY) === 'horas') {
-                                     duracaoFormatada = (parseFloat(registro.duracao) / 60).toFixed(2);
-                                 }
-                                 
-                                 const row = [
-                                     dataFormatada,
-                                     registro.operador,
-                                     registro.codigo,
-                                     registro.motivo.split(' - ')[1] || registro.registro.motivo,
-                                     registro.ocorrencia,
-                                     duracaoFormatada
-                                 ];
-                                 tableRows.push(row);
-                             });
+                    // Popular dados da tabela
+                    registros.forEach(registro => {
+                        let duracaoFormatada = registro.duracao;
+                        if (useHoras) {
+                            duracaoFormatada = (parseFloat(registro.duracao) / 60).toFixed(2);
+                        }
+                        duracaoFormatada += useHoras ? ' h' : ' min';
+                        
+                        const row = [
+                            formatarDataSimples(registro.data),
+                            registro.setor || '-',
+                            registro.operador,
+                            registro.codigo,
+                            registro.motivo,
+                            registro.ocorrencia,
+                            duracaoFormatada
+                        ];
+                        tableRows.push(row);
+                    });
                     
                     // Adicionar tabela ao PDF
                     doc.autoTable({
                         head: [tableColumn],
                         body: tableRows,
-                        startY: opcoes.motivo || opcoes.operador ? 85 : 70,
+                        startY: opcoes.motivo || opcoes.operador ? yPos + 10 : 70,
                         styles: {
                             fontSize: 8,
                             cellPadding: 2,
                             lineColor: [200, 200, 200]
                         },
                         headStyles: {
-                            fillColor: [59, 130, 246],
+                            fillColor: [229, 62, 62],
                             textColor: [255, 255, 255],
                             fontStyle: 'bold'
                         },
@@ -4330,6 +4843,7 @@
                         const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
                         doc.text('Sistema de Registro de Paradas de Máquina', 105, pageHeight - 10, { align: 'center' });
                         doc.text(`Página ${i} de ${pageCount}`, pageSize.width - 20, pageHeight - 10);
+                        doc.text('Responsável Técnico: Gabriel Perrin', 20, pageHeight - 10);
                     }
                     
                     // Adicionar este relatório ao histórico
@@ -4338,8 +4852,10 @@
                     // Salvar o PDF
                     doc.save(`Relatorio_Paradas_${maquinaAtiva}_${formatarDataArquivo(new Date())}.pdf`);
                     
+                    hideLoading();
                     mostrarConfirmacao('success', 'Relatório em PDF gerado com sucesso!');
                 } catch (error) {
+                    hideLoading();
                     console.error('Erro ao gerar PDF:', error);
                     mostrarConfirmacao('error', 'Ocorreu um erro ao gerar o PDF. Verifique o console para mais detalhes.');
                 }
@@ -4347,11 +4863,14 @@
             
             function gerarRelatorioExcel(registros, opcoes) {
                 try {
+                    showLoading('Gerando relatório em Excel...');
+                    
                     // Preparar dados em formato adequado para o Excel
                     const dados = registros.sort((a, b) => new Date(b.data) - new Date(a.data))
                         .map(registro => {
+                            const useHoras = localStorage.getItem(TIME_UNIT_KEY) === 'horas';
                             let duracaoFormatada = registro.duracao;
-                            if (localStorage.getItem(TIME_UNIT_KEY) === 'horas') {
+                            if (useHoras && !isNaN(registro.duracao)) {
                                 duracaoFormatada = (parseFloat(registro.duracao) / 60).toFixed(2);
                             }
                             
@@ -4398,8 +4917,10 @@
                     // Gerar o arquivo e forçar o download
                     XLSX.writeFile(wb, `Relatorio_Paradas_${maquinaAtiva}_${formatarDataArquivo(new Date())}.xlsx`);
                     
+                    hideLoading();
                     mostrarConfirmacao('success', 'Relatório em Excel gerado com sucesso!');
                 } catch (error) {
+                    hideLoading();
                     console.error('Erro ao gerar Excel:', error);
                     mostrarConfirmacao('error', 'Ocorreu um erro ao gerar o Excel. Verifique o console para mais detalhes.');
                 }
@@ -4554,13 +5075,9 @@
                 mostrarConfirmacao('success', 'Dados exportados com sucesso!');
             }
             
-            function importarDados() {
-                document.getElementById('import-file').click();
-                document.getElementById('export-dropdown').classList.add('hidden');
-            }
-            
-            document.getElementById('import-file').addEventListener('change', (e) => {
-                const file = e.target.files[0];
+            function importarDados(event) {
+                const fileInput = event.target;
+                const file = fileInput.files[0];
                 if (!file) return;
                 
                 const reader = new FileReader();
@@ -4585,10 +5102,13 @@
                     }
                     
                     // Limpar input file
-                    e.target.value = '';
+                    fileInput.value = '';
                 };
                 reader.readAsText(file);
-            });
+                
+                // Esconder dropdown se aberto
+                document.getElementById('export-dropdown').classList.add('hidden');
+            }
             
             function processarImportacao(dados) {
                 try {
@@ -4597,7 +5117,7 @@
                     // Configurações
                     if (dados.configuracoes) {
                         localStorage.setItem(TIME_UNIT_KEY, dados.configuracoes.unidadeTempo || 'minutos');
-                        localStorage.setItem(OPERATOR_BINDING_KEY, dados.configuracoes.vinculacaoOperadores || 'false');
+                        localStorage.setItem(OPERATOR_BINDING_KEY, dados.configuracoes.vinculacaoOperadores || 'true');
                     }
                     
                     // Dados básicos
@@ -4637,6 +5157,7 @@
                     carregarMotivosSelect();
                     
                     if (maquinaAtiva) {
+                        preCarregarOperadores();
                         carregarRegistros();
                         if (!document.getElementById('section-dashboard').classList.contains('hidden')) {
                             atualizarDashboard();
@@ -4676,7 +5197,7 @@
                     
                     // Restaurar configurações padrão
                     localStorage.setItem(TIME_UNIT_KEY, 'minutos');
-                    localStorage.setItem(OPERATOR_BINDING_KEY, 'false');
+                    localStorage.setItem(OPERATOR_BINDING_KEY, 'true');
                     
                     // Inicializar dados padrão
                     inicializarDadosPadrao();
@@ -4708,7 +5229,7 @@
                 
                 // Configurar botão com base no tipo de confirmação
                 const btnConfirmar = document.getElementById('confirmar-confirmar');
-                btnConfirmar.className = 'px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-colors premium-button';
+                btnConfirmar.className = 'px-4 py-2 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-colors premium-button';
                 
                 if (tipo === 'danger') {
                     btnConfirmar.classList.add('bg-red-600', 'hover:bg-red-700', 'focus:ring-red-500');
@@ -4737,7 +5258,7 @@
             
             function mostrarConfirmacao(tipo, mensagem) {
                 const toast = document.createElement('div');
-                toast.className = 'fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg text-white flex items-center max-w-xs z-50 transform transition-all duration-300 ease-out translate-y-10 opacity-0';
+                toast.className = 'fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg text-black flex items-center max-w-xs z-50 transform transition-all duration-300 ease-out translate-y-10 opacity-0';
                 
                 let icon, bgColor;
                 
